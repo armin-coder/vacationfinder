@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust Destinations - Your Perfect Holiday Awaits</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .destinations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            padding: 0 20px 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .destination-card {
+            perspective: 1000px;
+            height: 300px;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+            cursor: pointer;
+        }
+
+        .destination-card:hover .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 30px;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            transform: rotateY(180deg);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .destination-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+
+        .destination-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .destination-country {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .destination-description {
+            font-size: 1em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .destination-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feature-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            backdrop-filter: blur(5px);
+        }
+
+        .best-for {
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-icon {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+            font-size: 2em;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 400px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        .card-gradient-1 { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
+        .card-gradient-2 { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .card-gradient-3 { background: linear-gradient(135deg, #45b7d1, #96c93d); }
+        .card-gradient-4 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .card-gradient-5 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .card-gradient-6 { background: linear-gradient(135deg, #fa709a, #fee140); }
+
+        .back-gradient-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .back-gradient-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .back-gradient-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .back-gradient-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .back-gradient-5 { background: linear-gradient(135deg, #fa709a, #fee140); }
+        .back-gradient-6 { background: linear-gradient(135deg, #a8edea, #fed6e3); }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .destinations-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .filter-tabs {
+                gap: 10px;
+            }
+            
+            .filter-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .stats-bar {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-icon" style="left: 10%; animation-delay: 0s;">✈️</div>
+        <div class="floating-icon" style="left: 20%; animation-delay: 5s;">🏝️</div>
+        <div class="floating-icon" style="left: 30%; animation-delay: 10s;">🗺️</div>
+        <div class="floating-icon" style="left: 40%; animation-delay: 15s;">🎒</div>
+        <div class="floating-icon" style="left: 50%; animation-delay: 2s;">🏔️</div>
+        <div class="floating-icon" style="left: 60%; animation-delay: 8s;">🏖️</div>
+        <div class="floating-icon" style="left: 70%; animation-delay: 12s;">🎭</div>
+        <div class="floating-icon" style="left: 80%; animation-delay: 6s;">🍜</div>
+        <div class="floating-icon" style="left: 90%; animation-delay: 14s;">📸</div>
+    </div>
+
+    <header class="header">
+        <h1>🌍 Wanderlust Destinations</h1>
+        <p>Your perfect holiday awaits. Discover 60 handpicked destinations that promise unforgettable experiences for families and solo travelers.</p>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-number">60</span>
+                <span class="stat-label">Curated Destinations</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Personally Vetted</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">0</span>
+                <span class="stat-label">Tourist Traps</span>
+            </div>
+        </div>
+
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="Search destinations..." id="searchInput">
+            <span class="search-icon">🔍</span>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="filter-btn active" data-filter="all">All Destinations</button>
+            <button class="filter-btn" data-filter="family">Family Friendly</button>
+            <button class="filter-btn" data-filter="solo">Solo Travel</button>
+            <button class="filter-btn" data-filter="beach">Beach & Islands</button>
+            <button class="filter-btn" data-filter="city">City Adventures</button>
+            <button class="filter-btn" data-filter="nature">Nature & Wildlife</button>
+        </div>
+    </header>
+
+    <main class="destinations-grid" id="destinationsGrid">
+        <!-- Destinations will be populated by JavaScript -->
+    </main>
+
+    <script>
+        const destinations = [
+            {
+                name: "Santorini",
+                country: "Greece",
+                icon: "🏛️",
+                description: "Whitewashed buildings perched on dramatic cliffs, world-famous sunsets, and crystal-clear Aegean waters. Perfect for romantic getaways and photography lovers.",
+                features: ["Stunning Sunsets", "Volcanic Beaches", "Wine Tasting", "Historic Sites"],
+                bestFor: "Perfect for couples and solo photographers",
+                category: ["beach", "solo"],
+                frontGradient: "card-gradient-1",
+                backGradient: "back-gradient-1"
+            },
+            {
+                name: "Kyoto",
+                country: "Japan",
+                icon: "🏯",
+                description: "Ancient temples, traditional gardens, and geisha districts. Experience authentic Japanese culture while enjoying modern amenities and incredible cuisine.",
+                features: ["Traditional Culture", "Temple Visits", "Cherry Blossoms", "Tea Ceremonies"],
+                bestFor: "Ideal for families and culture enthusiasts",
+                category: ["city", "family"],
+                frontGradient: "card-gradient-2",
+                backGradient: "back-gradient-2"
+            },
+            {
+                name: "Costa Rica",
+                country: "Central America",
+                icon: "🦋",
+                description: "Incredible biodiversity, zip-lining adventures, and pristine beaches. A paradise for nature lovers and adventure seekers of all ages.",
+                features: ["Wildlife Viewing", "Adventure Sports", "Eco-Tourism", "Beach Relaxation"],
+                bestFor: "Perfect for adventurous families",
+                category: ["nature", "family"],
+                frontGradient: "card-gradient-3",
+                backGradient: "back-gradient-3"
+            },
+            {
+                name: "Iceland",
+                country: "Nordic",
+                icon: "🌋",
+                description: "Otherworldly landscapes, Northern Lights, and natural hot springs. A photographer's dream and nature lover's paradise.",
+                features: ["Northern Lights", "Geysers", "Glaciers", "Hot Springs"],
+                bestFor: "Amazing for solo adventurers",
+                category: ["nature", "solo"],
+                frontGradient: "card-gradient-4",
+                backGradient: "back-gradient-4"
+            },
+            {
+                name: "Bali",
+                country: "Indonesia",
+                icon: "🏝️",
+                description: "Tropical paradise with ancient temples, terraced rice fields, and stunning beaches. Perfect blend of relaxation and cultural exploration.",
+                features: ["Temple Tours", "Rice Terraces", "Beach Clubs", "Spa Retreats"],
+                bestFor: "Great for families and couples",
+                category: ["beach", "family"],
+                frontGradient: "card-gradient-5",
+                backGradient: "back-gradient-5"
+            },
+            {
+                name: "Barcelona",
+                country: "Spain",
+                icon: "🎨",
+                description: "Gaudí's architectural wonders, vibrant food scene, and Mediterranean beaches. A perfect blend of art, culture, and seaside relaxation.",
+                features: ["Architecture", "Food Scene", "Beach Access", "Art Museums"],
+                bestFor: "Perfect for art lovers and families",
+                category: ["city", "family"],
+                frontGradient: "card-gradient-6",
+                backGradient: "back-gradient-6"
+            },
+            {
+                name: "New Zealand",
+                country: "Oceania",
+                icon: "🏔️",
+                description: "Breathtaking landscapes, adventure activities, and friendly locals. From snow-capped mountains to pristine beaches.",
+                features: ["Adventure Sports", "Stunning Scenery", "Hiking Trails", "Wildlife"],
+                bestFor: "Ultimate adventure destination",
+                category: ["nature", "solo"],
+                frontGradient: "card-gradient-1",
+                backGradient: "back-gradient-1"
+            },
+            {
+                name: "Morocco",
+                country: "North Africa",
+                icon: "🕌",
+                description: "Colorful markets, desert adventures, and ancient medinas. A sensory feast of culture, cuisine, and breathtaking landscapes.",
+                features: ["Desert Safaris", "Medina Tours", "Moroccan Cuisine", "Atlas Mountains"],
+                bestFor: "Great for cultural explorers",
+                category: ["city", "solo"],
+                frontGradient: "card-gradient-2",
+                backGradient: "back-gradient-2"
+            },
+            {
+                name: "Thailand",
+                country: "Southeast Asia",
+                icon: "🐘",
+                description: "Tropical beaches, ancient temples, and incredible street food. Perfect for budget travelers and luxury seekers alike.",
+                features: ["Elephant Sanctuaries", "Island Hopping", "Street Food", "Temples"],
+                bestFor: "Excellent for families and backpackers",
+                category: ["beach", "family"],
+                frontGradient: "card-gradient-3",
+                backGradient: "back-gradient-3"
+            },
+            {
+                name: "Norway",
+                country: "Scandinavia",
+                icon: "🌌",
+                description: "Dramatic fjords, Northern Lights, and midnight sun. Experience some of the world's most spectacular natural phenomena.",
+                features: ["Fjord Cruises", "Northern Lights", "Midnight Sun", "Hiking"],
+                bestFor: "Perfect for nature photographers",
+                category: ["nature", "solo"],
+                frontGradient: "card-gradient-4",
+                backGradient: "back-gradient-4"
+            },
+            {
+                name: "Portugal",
+                country: "Europe",
+                icon: "🏰",
+                description: "Charming coastal towns, historic cities, and excellent wine. A hidden gem with incredible value and authentic experiences.",
+                features: ["Historic Towns", "Wine Regions", "Coastal Beauty", "Authentic Culture"],
+                bestFor: "Ideal for romantic getaways",
+                category: ["city", "solo"],
+                frontGradient: "card-gradient-5",
+                backGradient: "back-gradient-5"
+            },
+            {
+                name: "Maldives",
+                country: "Indian Ocean",
+                icon: "🏖️",
+                description: "Overwater bungalows, pristine coral reefs, and crystal-clear waters. The ultimate tropical paradise for relaxation and romance.",
+                features: ["Overwater Villas", "Snorkeling", "Spa Treatments", "Private Beaches"],
+                bestFor: "Ultimate luxury escape",
+                category: ["beach", "solo"],
+                frontGradient: "card-gradient-6",
+                backGradient: "back-gradient-6"
+            }
+        ];
+
+        let filteredDestinations = destinations;
+
+        function renderDestinations(destinationsToRender) {
+            const grid = document.getElementById('destinationsGrid');
+            grid.innerHTML = '';
+
+            destinationsToRender.forEach((destination, index) => {
+                const card = document.createElement('div');
+                card.className = 'destination-card';
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front ${destination.frontGradient}">
+                            <div class="destination-icon">${destination.icon}</div>
+                            <h3 class="destination-name">${destination.name}</h3>
+                            <p class="destination-country">${destination.country}</p>
+                        </div>
+                        <div class="card-back ${destination.backGradient}">
+                            <div>
+                                <p class="destination-description">${destination.description}</p>
+                                <div class="destination-features">
+                                    ${destination.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                                </div>
+                            </div>
+                            <div class="best-for">${destination.bestFor}</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add animation delay
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animation = 'fadeInUp 0.8s ease-out both';
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function filterDestinations(category) {
+            if (category === 'all') {
+                filteredDestinations = destinations;
+            } else {
+                filteredDestinations = destinations.filter(dest => dest.category.includes(category));
+            }
+            renderDestinations(filteredDestinations);
+        }
+
+        function searchDestinations(query) {
+            const searchResults = filteredDestinations.filter(dest => 
+                dest.name.toLowerCase().includes(query.toLowerCase()) ||
+                dest.country.toLowerCase().includes(query.toLowerCase()) ||
+                dest.description.toLowerCase().includes(query.toLowerCase()) ||
+                dest.features.some(feature => feature.toLowerCase().includes(query.toLowerCase()))
+            );
+            renderDestinations(searchResults);
+        }
+
+        // Event listeners
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                filterDestinations(e.target.dataset.filter);
+            });
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchDestinations(e.target.value);
+        });
+
+        // Initialize
+        renderDestinations(destinations);
+
+        // Add some interactivity to stats
+        const statNumbers = document.querySelectorAll('.stat-number');
+        statNumbers.forEach(stat => {
+            const finalValue = stat.textContent;
+            if (finalValue !== '0') {
+                stat.textContent = '0';
+                const increment = finalValue === '100%' ? 5 : 3;
+                let current = 0;
+                const interval = setInterval(() => {
+                    current += increment;
+                    if (finalValue === '100%') {
+                        stat.textContent = current + '%';
+                        if (current >= 100) {
+                            stat.textContent = '100%';
+                            clearInterval(interval);
+                        }
+                    } else {
+                        stat.textContent = current;
+                        if (current >= parseInt(finalValue)) {
+                            stat.textContent = finalValue;
+                            clearInterval(interval);
+                        }
+                    }
+                }, 50);
+            }
+        });
+    </script>
+</body>
+</html>
